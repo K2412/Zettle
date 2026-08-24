@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { AtomizeAssist } from '@/components/notes/atomize-assist';
+import { FormulateAssist } from '@/components/notes/formulate-assist';
+import { TriageAssist } from '@/components/notes/triage-assist';
 import type { Note, PhaseOption } from '@/types';
 
 type Props = {
@@ -12,7 +14,7 @@ type Props = {
  * The assist panel: one tab per playbook phase, with the suggested phase marked
  * and active on mount. Which phase is active is ephemeral client state — a tab
  * switch only swaps the shown child, it never touches or navigates the note.
- * Only Atomize is wired today; the rest show a quiet placeholder.
+ * Triage, Atomize, and Formulate are wired today; the rest show a quiet placeholder.
  */
 export function AssistPanel({ note, suggestedPhase, phases }: Props) {
     const [activePhase, setActivePhase] = useState(suggestedPhase);
@@ -58,14 +60,30 @@ export function AssistPanel({ note, suggestedPhase, phases }: Props) {
             </div>
 
             <div data-test="assist-active">
-                {activePhase === 'atomize' ? (
-                    <AtomizeAssist note={note} />
-                ) : (
-                    <PhasePlaceholder />
-                )}
+                <ActiveAssist activePhase={activePhase} note={note} />
             </div>
         </section>
     );
+}
+
+/** Maps the active phase to its wired child, falling back to the placeholder. */
+function ActiveAssist({
+    activePhase,
+    note,
+}: {
+    activePhase: string;
+    note: Note;
+}) {
+    switch (activePhase) {
+        case 'triage':
+            return <TriageAssist note={note} />;
+        case 'atomize':
+            return <AtomizeAssist note={note} />;
+        case 'formulate':
+            return <FormulateAssist note={note} />;
+        default:
+            return <PhasePlaceholder />;
+    }
 }
 
 function PhasePlaceholder() {

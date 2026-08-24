@@ -37,6 +37,18 @@ export type AtomizeIdea = {
     rationale: string;
 };
 
+/**
+ * The Triage assist's read-only suggestion: where the note should go
+ * (`destination`, a raw enum value like `project_only`), the note type it
+ * recommends, and the reasoning behind both. Applying the type is a separate,
+ * explicit write.
+ */
+export type TriageResult = {
+    destination: string;
+    note_type: NoteType;
+    reasoning: string;
+};
+
 /** One discovery suggestion: a note related by embedding nearness, with score. */
 export type DiscoverySuggestion = NoteLink & {
     snippet: string;
