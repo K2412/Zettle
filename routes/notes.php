@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Note\AtomizeController;
 use App\Http\Controllers\Note\ConnectionController;
+use App\Http\Controllers\Note\FormulateController;
 use App\Http\Controllers\Note\NoteTagController;
 use App\Http\Controllers\Note\TriageController;
 use App\Http\Controllers\NoteController;
@@ -38,4 +39,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('notes/{note:slug}/assists/triage', [TriageController::class, 'run'])->name('notes.assists.triage');
     Route::post('notes/{note:slug}/assists/triage/apply-type', [TriageController::class, 'applyType'])->name('notes.assists.triage.apply-type');
+
+    Route::post('notes/{note:slug}/assists/formulate/evaluate', [FormulateController::class, 'evaluate'])->name('notes.assists.formulate.evaluate');
 });
