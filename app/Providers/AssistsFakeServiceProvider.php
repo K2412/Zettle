@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Ai\Agents\AtomizeAgent;
+use App\Ai\Agents\FormulateAgent;
 use App\Ai\Agents\TriageAgent;
 use Illuminate\Support\ServiceProvider;
 
@@ -63,6 +64,11 @@ class AssistsFakeServiceProvider extends ServiceProvider
                     'note_type' => 'permanent',
                     'reasoning' => 'It extends an idea you hold and deserves a permanent note.',
                 ],
+            ],
+            FormulateAgent::class => [
+                'Your title states a topic, not a claim. Consider stating what is true about it. '.
+                'Define any pronoun or term a first-time reader would not resolve, and make the '.
+                'scope of the claim visible.',
             ],
         ];
     }
