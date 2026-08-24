@@ -105,6 +105,27 @@ Headless **Laravel Fortify** — email/password registration, login, and passwor
 
 ## Installation
 
+### Don't have PHP / Composer yet?
+
+The [php.new](https://php.new) installer sets up PHP, Composer, and the Laravel installer in one step. Pick your platform:
+
+**macOS**
+```bash
+/bin/bash -c "$(curl -fsSL https://php.new/install/mac/8.5)"
+```
+
+**Windows** (run PowerShell as Administrator)
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://php.new/install/windows/8.5'))
+```
+
+**Linux**
+```bash
+/bin/bash -c "$(curl -fsSL https://php.new/install/linux/8.5)"
+```
+
+Already have PHP 8.3+ and Composer? Skip straight to the Quick Start.
+
 ### Quick Start
 
 ```bash
