@@ -1,0 +1,39 @@
+/.phpunit.cache
+/bootstrap/ssr
+/node_modules
+/public/build
+/public/fonts-manifest.dev.json
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/resources/js/actions
+/resources/js/routes
+/resources/js/wayfinder
+/vendor
+.DS_Store
+.env
+.env.backup
+.env.production
+.phpactor.json
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+/auth.json
+/.fleet
+/.idea
+/.nova
+/.vscode
+/.zed
+
+/tests/Browser/Screenshots
+
+# sqlite-vec native extension binaries are platform-specific; each machine/CI
+# fetches its own. See database/extensions/README.md.
+/database/extensions/*.dylib
+/database/extensions/*.so
+
+# Throwaway design sketches — never ship
+docs/sketches/

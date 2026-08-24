@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connections — manual typed links between notes</title>
+<style>
+  :root {
+    --ink: #1a1a1a; --muted: #5c5c5c; --rule: #e5e2dc; --bg: #fbfaf7; --card: #ffffff;
+    --accent: #b5651d; --callout-bg: #f4f1ea; --code-bg: #f6f4ef;
+    --decide: #6b4d9e; --decide-bg: #f1ecf7; --guess: #a35c00; --guess-bg: #fbf1e0;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 18px/1.65 "Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 4rem 1.25rem 6rem; }
+  header.doc { margin-bottom: 2.5rem; }
+  header.doc .kicker { font: 600 13px/1 ui-sans-serif, system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 0 0 .75rem; }
+  h1 { font-size: 2.1rem; line-height: 1.15; margin: 0 0 .5rem; font-weight: 700; }
+  header.doc .meta { color: var(--muted); font: 400 15px/1.5 ui-sans-serif, system-ui, sans-serif; }
+  h2 { font-size: 1.5rem; margin: 3rem 0 1rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); font-weight: 700; }
+  h2:first-of-type { border-top: none; padding-top: 0; }
+  h3 { font-size: 1.2rem; margin: 2rem 0 .6rem; font-weight: 700; }
+  p, li { color: #262626; }
+  a { color: var(--accent); }
+  strong { font-weight: 700; }
+  .lede { font-size: 1.15rem; color: #333; }
+  .callout { background: var(--callout-bg); border-left: 3px solid var(--accent); padding: 1rem 1.25rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; }
+  .callout .label { font: 600 12px/1 ui-sans-serif, system-ui, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: .5rem; }
+  details.bg { border: 1px solid var(--rule); border-radius: 8px; padding: .5rem 1.25rem; margin: 1.5rem 0; background: var(--card); }
+  details.bg > summary { cursor: pointer; font: 600 15px/1.4 ui-sans-serif, system-ui, sans-serif; padding: .5rem 0; list-style: none; }
+  details.bg > summary::-webkit-details-marker { display: none; }
+  details.bg > summary::before { content: "▸ "; color: var(--muted); }
+  details.bg[open] > summary::before { content: "▾ "; }
+  pre { background: var(--code-bg); border: 1px solid var(--rule); border-radius: 8px; padding: 1rem 1.1rem; overflow-x: auto; font: 14px/1.55 ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .92em; background: var(--code-bg); padding: .1em .35em; border-radius: 4px; }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  .shapehdr { font: 600 14px/1.4 ui-monospace, Menlo, monospace; background: #2b2b2b; color: #f5f5f5; padding: .5rem .9rem; border-radius: 8px 8px 0 0; margin-top: 2rem; }
+  .shapehdr + pre { border-radius: 0 0 8px 8px; border-top: none; margin-top: 0; }
+  figure { margin: 2rem 0; text-align: center; }
+  figure svg { max-width: 100%; height: auto; }
+  figcaption { color: var(--muted); font: 400 14px/1.5 ui-sans-serif, system-ui, sans-serif; margin-top: .6rem; }
+  .decision { background: var(--decide-bg); border-left: 3px solid var(--decide); padding: 1rem 1.25rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+  .decision .head { font-weight: 700; margin-bottom: .4rem; }
+  .decision .why { margin: .3rem 0 0; }
+  .decision .rejected { color: var(--muted); font-size: .95rem; margin: .5rem 0 0; }
+  .decision .rejected b { color: #444; font-weight: 600; }
+  .guess { background: var(--guess-bg); border-left: 3px solid var(--guess); padding: 1rem 1.25rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+  .guess .head { font-weight: 700; margin-bottom: .4rem; }
+  .contest-note { font: 400 15px/1.5 ui-sans-serif, system-ui, sans-serif; color: var(--muted); margin: .5rem 0 1.5rem; }
+  table.rel { border-collapse: collapse; margin: 1rem 0; font: 400 14px/1.5 ui-sans-serif, system-ui, sans-serif; }
+  table.rel td, table.rel th { border: 1px solid var(--rule); padding: .4rem .7rem; text-align: left; }
+  table.rel th { background: #f4f1ea; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="doc">
+    <p class="kicker">Design sketch · before the code</p>
+    <h1>Connections — linking two notes with a named relationship</h1>
+    <p class="meta">/pair slice 2 · a NEW feature (the source app has no manual version) · touches app/Http, app/Services/Note, resources/js/components/notes/*, the notes/show sidebar</p>
+  </header>
+
+  <p class="lede">A strawman for how I'd let you say, in your own hand, "this note <em>supports</em> that one" — and see it from both sides. This is a new capability the old app never had (it only made links by typing <code>[[wikilinks]]</code> or let an AI propose relationships). Argue with the <strong>Design decisions</strong> and <strong>Where I'm guessing</strong> sections — the directionality choice especially. Redirecting here costs a sentence; after the build it costs a rewrite.</p>
+
+  <h2>Background</h2>
+  <details class="bg" open>
+    <summary>What already exists, and the one invariant we must not break</summary>
+    <p><strong>The edge is already in the database.</strong> Notes-core built a <code>connections</code> table: a <em>directed</em> edge — a <code>source_note_id</code>, a <code>target_note_id</code>, a <code>relationship</code> (one of 18 enum values), an optional <code>rationale</code>, unique on the triple <code>(source, target, relationship)</code>. So the storage for this feature is done; this slice is the <em>authoring</em> and <em>display</em> on top of it.</p>
+    <p><strong>Two kinds of edge share that one table.</strong> Today every row is a <code>mentions</code> edge, created automatically when you type <code>[[Another Note]]</code> in the body. This slice adds <em>authored</em> edges — <code>supports</code>, <code>contradicts</code>, <code>depends_on</code>, etc. — that you make by hand.</p>
+    <p><strong>The invariant.</strong> When you save a note, the server re-reads the body and rebuilds the <code>mentions</code> edges from the <code>[[links]]</code> it finds (<code>NoteService::syncLinksFromBody</code>). It <em>only</em> touches <code>mentions</code> rows. So authored edges already survive a re-save — but every part of this slice has to keep honouring that line: <strong>never let the wikilink sync see or delete an authored relationship, and never let authoring write a <code>mentions</code> row.</strong></p>
+    <p><strong>Where it shows up.</strong> The <code>notes/show</code> sidebar already has a "Links to" and a "Backlinks" list (built from <em>all</em> outgoing/incoming edges today) and a dashed <em>"Find connections — coming in the Connections slice"</em> placeholder. That placeholder is where this lands.</p>
+  </details>
+
+  <h2>The approach</h2>
+  <p class="lede">Add a <strong>Connections</strong> panel to the note sidebar: a list of the note's authored relationships (both the ones it asserts and the ones pointed at it), and a "+ Connect" control to make a new one — pick a target note, pick a relationship, optionally say why.</p>
+  <div class="callout">
+    <span class="label">Intuition</span>
+    <p>Think of it like the "Linked issues" box in a bug tracker — "blocks PROJ-12", "is blocked by PROJ-9". You pick the other ticket and the kind of link. Here the links are ideas, not tickets: "this note <strong>supports</strong> [Spaced Repetition]", "this note <strong>depends on</strong> [Working Memory]". And like a tracker, the <em>other</em> note automatically shows the mirror image — open Working Memory and it says "<strong>required by</strong> [this note]", without you entering anything twice.</p>
+  </div>
+
+  <h3>The mirror image, concretely — the load-bearing bit</h3>
+  <p>The edge is stored <strong>once</strong>, on the note that asserted it. The other note computes what to show by flipping the relationship to its <em>inverse name</em>. Some relationships have a distinct inverse; some read the same both ways.</p>
+  <table class="rel">
+    <tr><th>You assert (A → B)</th><th>B automatically shows (← A)</th><th>kind</th></tr>
+    <tr><td>supports</td><td>supported by</td><td>directed, named inverse</td></tr>
+    <tr><td>depends on</td><td>required by</td><td>directed, named inverse</td></tr>
+    <tr><td>explains</td><td>is explained by</td><td>directed (enum already has both)</td></tr>
+    <tr><td>example of</td><td>has example</td><td>directed, named inverse</td></tr>
+    <tr><td>contradicts</td><td>contradicts</td><td>symmetric — same both ways</td></tr>
+    <tr><td>analogous to</td><td>analogous to</td><td>symmetric</td></tr>
+    <tr><td>tension with</td><td>tension with</td><td>symmetric</td></tr>
+  </table>
+
+  <figure>
+    <svg viewBox="0 0 640 210" role="img" aria-label="One stored edge, shown from both notes">
+      <style>
+        .n{fill:#fff;stroke:#6b4d9e;stroke-width:1.5}
+        .t{font:13px ui-sans-serif,system-ui,sans-serif;fill:#262626}
+        .tm{font:11px ui-sans-serif,system-ui,sans-serif;fill:#5c5c5c}
+        .ar{stroke:#b5651d;stroke-width:1.6;fill:none;marker-end:url(#a)}
+      </style>
+      <defs><marker id="a" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#b5651d"/></marker></defs>
+      <rect class="n" x="30" y="40" width="180" height="60" rx="8"/>
+      <text class="t" x="48" y="66">Note A</text>
+      <text class="tm" x="48" y="86">sidebar: “supports → B”</text>
+      <rect class="n" x="430" y="40" width="180" height="60" rx="8"/>
+      <text class="t" x="448" y="66">Note B</text>
+      <text class="tm" x="448" y="86">sidebar: “supported by ← A”</text>
+      <path class="ar" d="M210,70 L430,70"/>
+      <rect class="n" x="235" y="150" width="170" height="44" rx="8" style="stroke:#5c5c5c"/>
+      <text class="tm" x="250" y="168">one connections row:</text>
+      <text class="tm" x="250" y="184">A → B, supports</text>
+      <path style="stroke:#ccc;stroke-dasharray:3 3;fill:none" d="M320,150 L300,100"/>
+    </svg>
+    <figcaption>One directed row in the database. A shows it forward; B shows the computed inverse. No duplicate row, no double entry.</figcaption>
+  </figure>
+
+  <h2>Intended shape</h2>
+
+  <p>The inverse map is the heart of the model — one place that both the display and the API read. Coarse; the full 18-entry table is spec's job.</p>
+  <div class="shapehdr">Relationship::inverse() — one source of truth for the mirror</div>
+  <pre><code>inverse(rel):
+  directed pairs:   supports↔supported_by, depends_on↔required_by,
+                    explains↔is_explained_by, example_of↔has_example, ...
+  symmetric:        contradicts, analogous_to, tension_with, distinguishes_from
+                      -> return themselves
+  (some inverses are display-only labels, not new enum cases — see decisions)</code></pre>
+
+  <p>The show page hands the client two lists, already resolved so React renders labels, not logic.</p>
+  <div class="shapehdr">show props — connections, both directions, pre-labelled</div>
+  <pre><code>connections: outgoing authored edges (rel != mentions)
+             each: { target note (id,title,slug), relationship, label, rationale }
+incoming:    inbound authored edges (rel != mentions)
+             each: { source note, relationship, label = inverse(relationship), rationale }
+// mentions stay in the existing "Links to" / "Backlinks" lists, untouched</code></pre>
+
+  <p>Authoring is a thin controller over the existing pieces — the target picker is the <em>same</em> <code>/notes/search</code> typeahead the <code>[[</code> autocomplete already uses.</p>
+  <div class="shapehdr">ConnectionController — thin, delegates, preserves the invariant</div>
+  <pre><code>store(note, req):   authorize update(note) ; validate target owned + rel in enum (not mentions)
+                    Connection::firstOrCreate(source=note, target, relationship){ rationale }
+                    back()   // partial reload: only [connections, incoming]
+update(connection): authorize ; change relationship/rationale in place
+destroy(connection):authorize ; delete
+// StoreConnectionRequest forbids relationship = mentions (that channel is [[ ]] only)</code></pre>
+
+  <h2>Design decisions <span class="contest-note">— contest these</span></h2>
+
+  <div class="decision">
+    <p class="head">Store the edge once (directed) and compute the inverse for display — do not write two rows.</p>
+    <p class="why">The table is already a directed edge with a uniqueness constraint. One row per assertion keeps writes simple, avoids the two-rows-out-of-sync bug, and matches how issue trackers do "blocks / is blocked by". The other note computes its label from <code>inverse(relationship)</code>.</p>
+    <p class="rejected"><b>Rejected:</b> writing a reciprocal row on the target (double-entry) — doubles storage, invites drift, and complicates delete. Also rejected: a symmetric/undirected edge — loses the direction "A supports B ≠ B supports A".</p>
+  </div>
+
+  <div class="decision">
+    <p class="head">Keep authored connections in a NEW "Connections" panel, separate from the existing "Links to" / "Backlinks".</p>
+    <p class="why">"Links to"/"Backlinks" are <code>[[wikilink]]</code> mentions — "I referenced this". Authored connections are "I assert this relationship". They mean different things; mixing them muddies both. The new panel groups by relationship label; mentions stay as-is.</p>
+    <p class="rejected"><b>Rejected:</b> folding typed connections into the existing lists — a reader couldn't tell a casual mention from a deliberate "contradicts". Also rejected: relabelling the mention lists — they're fine; they just aren't this.</p>
+  </div>
+
+  <div class="decision">
+    <p class="head">Author inline in the sidebar (a "+ Connect" that expands a picker), not a full-screen modal.</p>
+    <p class="why">The picker is small — a note typeahead, a relationship dropdown, an optional rationale line. Inline keeps you next to the note you're connecting and reuses the sidebar you're already in. The research's incident.io modal is the alternative, and the old stub was named "modal", but inline is lighter for a three-field form.</p>
+    <p class="rejected"><b>Rejected:</b> a modal over the whole page — heavier than the interaction needs, and it hides the note you're linking from. (If the relationship list needs a lot of room, this flips — see guesses.)</p>
+  </div>
+
+  <div class="decision">
+    <p class="head">Reuse <code>/notes/search</code> (the <code>[[</code> endpoint) as the target picker; POST authored edges via a normal Inertia <code>&lt;Form&gt;</code>/visit.</p>
+    <p class="why">The typeahead already exists, is tested, and excludes the current note. Authoring is a real mutation that should go through Inertia (redirect + partial reload of <code>connections</code>/<code>incoming</code>), unlike the background <code>[[</code> lookup which uses a plain fetch.</p>
+    <p class="rejected"><b>Rejected:</b> a second search endpoint — needless duplication. Also rejected: optimistic client-only insert — the server owns the uniqueness + ownership checks; a visit keeps one source of truth.</p>
+  </div>
+
+  <div class="decision">
+    <p class="head">Edit a connection's relationship + rationale in place (PATCH); also allow remove.</p>
+    <p class="why">Changing your mind about <em>how</em> two notes relate ("this actually <em>qualifies</em>, not <em>supports</em>") is common in synthesis; forcing remove-then-re-add loses the rationale and is clumsy. A small edit affordance on each row.</p>
+    <p class="rejected"><b>Rejected:</b> remove + re-add only — simpler to build but worse for the core "refine your thinking" use, which is the whole point of the vocabulary.</p>
+  </div>
+
+  <h2>Where I'm guessing</h2>
+  <p class="contest-note">The honest gaps — these open the grill.</p>
+
+  <div class="guess">
+    <p class="head">Which of the 18 relationships to expose, and how.</p>
+    <p>Eighteen is a lot for a dropdown. I'm guessing a <strong>curated primary set</strong> (supports, contradicts, qualifies, extends, depends_on, example_of, explains) shown first, with the rest under a "more…" group — and I'd hide the two <em>system</em> types (<code>mentions</code>, <code>provenance</code>) entirely, since those aren't hand-authored. Is that the right default set? Should they be grouped by kind (evidential / structural / dialectical)? This is a domain call only you can make.</p>
+  </div>
+
+  <div class="guess">
+    <p class="head">The inverse map — the exact labels.</p>
+    <p>I can pair the obvious ones (supports↔supported by, depends_on↔required by, explains↔is explained by, example_of↔has example). But several are judgement calls: is <code>corrects</code>'s inverse "corrected by"? Is <code>raises_question_about</code> symmetric or "questioned by"? Is <code>contradicts</code> truly symmetric (I assumed yes)? And should these inverse labels be <em>display-only</em> strings, or real enum cases? I'm leaning display-only (don't bloat the enum), but that's a call.</p>
+  </div>
+
+  <div class="guess">
+    <p class="head">Rationale — required or optional?</p>
+    <p>I assumed <strong>optional</strong> (fast to connect, add the why later). But a Zettelkasten purist might argue an untyped-reason connection is noise, and requiring a sentence forces real thinking. Your methodology, your call.</p>
+  </div>
+
+  <div class="guess">
+    <p class="head">Inline vs modal (and whether the stub's name binds us).</p>
+    <p>I proposed inline. The old code left a stub literally named <code>connections-modal-stub</code>, and the research's cleanest patterns (incident.io, Plane) are modals. If you picture this as a focused "link two notes" modal — maybe reachable from a keyboard shortcut — say so and I'll flip it; it changes where the picker state lives.</p>
+  </div>
+
+  <div class="guess">
+    <p class="head">Do authored connections influence the graph / anything downstream?</p>
+    <p>I'm scoping this to author + display on the note page only. But typed connections are exactly what a graph view (slice 5) would color edges by, and what a structure note would read. I'm assuming <strong>no</strong> downstream coupling this slice — connections are just created and shown — and deferring graph/structure use. Confirm that boundary.</p>
+  </div>
+
+</div>
+</body>
+</html>

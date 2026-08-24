@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notes core — Livewire → React/Inertia</title>
+<style>
+  :root {
+    --ink: #1a1a1a; --muted: #5c5c5c; --rule: #e5e2dc; --bg: #fbfaf7; --card: #ffffff;
+    --accent: #b5651d; --add-bg: #e6f4ea; --add-ink: #1a7f37; --del-bg: #fbe9e9; --del-ink: #b62324;
+    --callout-bg: #f4f1ea; --code-bg: #f6f4ef; --ok: #1a7f37; --no: #b62324;
+    --decide: #6b4d9e; --decide-bg: #f1ecf7; --guess: #a35c00; --guess-bg: #fbf1e0;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 18px/1.65 "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 4rem 1.25rem 6rem; }
+  header.doc { margin-bottom: 2.5rem; }
+  header.doc .kicker { font: 600 13px/1 ui-sans-serif, system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 0 0 .75rem; }
+  h1 { font-size: 2.1rem; line-height: 1.15; margin: 0 0 .5rem; font-weight: 700; }
+  header.doc .meta { color: var(--muted); font: 400 15px/1.5 ui-sans-serif, system-ui, sans-serif; }
+  h2 { font-size: 1.5rem; margin: 3rem 0 1rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); font-weight: 700; }
+  h2:first-of-type { border-top: none; padding-top: 0; }
+  h3 { font-size: 1.2rem; margin: 2rem 0 .6rem; font-weight: 700; }
+  p, li { color: #262626; }
+  a { color: var(--accent); }
+  strong { font-weight: 700; }
+  .lede { font-size: 1.15rem; color: #333; }
+  .callout { background: var(--callout-bg); border-left: 3px solid var(--accent); padding: 1rem 1.25rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; }
+  .callout .label { font: 600 12px/1 ui-sans-serif, system-ui, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: .5rem; }
+  details.bg { border: 1px solid var(--rule); border-radius: 8px; padding: .5rem 1.25rem; margin: 1.5rem 0; background: var(--card); }
+  details.bg > summary { cursor: pointer; font: 600 15px/1.4 ui-sans-serif, system-ui, sans-serif; padding: .5rem 0; list-style: none; }
+  details.bg > summary::-webkit-details-marker { display: none; }
+  details.bg > summary::before { content: "▸ "; color: var(--muted); }
+  details.bg[open] > summary::before { content: "▾ "; }
+  pre { background: var(--code-bg); border: 1px solid var(--rule); border-radius: 8px; padding: 1rem 1.1rem; overflow-x: auto; font: 14px/1.55 ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .92em; background: var(--code-bg); padding: .1em .35em; border-radius: 4px; }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  .shapehdr { font: 600 14px/1.4 ui-monospace, Menlo, monospace; background: #2b2b2b; color: #f5f5f5; padding: .5rem .9rem; border-radius: 8px 8px 0 0; margin-top: 2rem; }
+  .shapehdr + pre { border-radius: 0 0 8px 8px; border-top: none; margin-top: 0; }
+  figure { margin: 2rem 0; text-align: center; }
+  figure svg { max-width: 100%; height: auto; }
+  figcaption { color: var(--muted); font: 400 14px/1.5 ui-sans-serif, system-ui, sans-serif; margin-top: .6rem; }
+  .decision { background: var(--decide-bg); border-left: 3px solid var(--decide); padding: 1rem 1.25rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+  .decision .head { font-weight: 700; margin-bottom: .4rem; }
+  .decision .why { margin: .3rem 0 0; }
+  .decision .rejected { color: var(--muted); font-size: .95rem; margin: .5rem 0 0; }
+  .decision .rejected b { color: #444; font-weight: 600; }
+  .guess { background: var(--guess-bg); border-left: 3px solid var(--guess); padding: 1rem 1.25rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+  .guess .head { font-weight: 700; margin-bottom: .4rem; }
+  .contest-note { font: 400 15px/1.5 ui-sans-serif, system-ui, sans-serif; color: var(--muted); margin: .5rem 0 1.5rem; }
+  .tag { display:inline-block; font: 600 11px/1 ui-sans-serif, system-ui, sans-serif; text-transform: uppercase; letter-spacing:.05em; padding:.25em .5em; border-radius:4px; background:#ece8e0; color:#6b5d48; margin-right:.35em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="doc">
+    <p class="kicker">Design sketch · before the code</p>
+    <h1>Notes core — porting the Livewire notes feature to React&nbsp;+&nbsp;Inertia</h1>
+    <p class="meta">/pair slice 1 of 6 · source: <code>zettle</code> (Livewire) → target: <code>zettle-inertia</code> · touches app/Http, app/Models, app/Services/Note, resources/js/pages/notes</p>
+  </header>
+
+  <p class="lede">This is a strawman of <em>how</em> I intend to rebuild the notes list and the note editor on the new stack — put here for you to argue with <strong>before</strong> I write any code. The list/CRUD is routine; the real risk is the editor, so most of the reasoning below is about that. Skim the decisions and the "where I'm guessing" section and push back — a sentence from you now saves a rewrite later.</p>
+
+  <h2>Background</h2>
+  <details class="bg" open>
+    <summary>How the notes feature works today, and what changes on the new stack</summary>
+    <p><strong>The domain (unchanged).</strong> A <em>note</em> has a title, a markdown body, a type (fleeting/literature/permanent/structure/project), and a URL slug. Notes link to each other: typing <code>[[Some Note Title]]</code> in the body creates a "mentions" connection to that note. The reverse direction is a <em>backlink</em>. Notes also carry tags.</p>
+    <p><strong>What Livewire did.</strong> In the old app a single page component held both the server state (the note, its tags, its links) <em>and</em> the interaction logic, talking to the server over a persistent "wire". The body textarea used <code>wire:model.live.debounce.1500ms</code> — every pause in typing shipped the value to the server and re-rendered. A separate Alpine.js file (<code>note-editor.js</code>) ran the purely-client bits: the Write/Preview tab, the "saved/saving/unsaved" label, and the <code>[[</code> autocomplete popover (which <code>fetch</code>ed <code>/notes/search</code> directly).</p>
+    <p><strong>What stays exactly the same.</strong> The entire backend below the controller — <code>NoteService</code>, the <code>DeleteNote</code> action, <code>NotePolicy</code>, the <code>Note</code>/<code>Tag</code> models, the <code>[[wikilink]]</code>-to-connection sync, the embedding job, and the <code>NoteSearchController</code> JSON endpoint — is plain Laravel and ports verbatim. (This is the thesis of <code>docs/architecture-inertia.md</code>: only the entry point is stack-specific.)</p>
+    <p><strong>What changes.</strong> The Livewire page component splits in two: a <em>thin Laravel controller</em> that returns props, and a <em>React page</em> that renders them. There is no persistent wire — the browser gets serialized props and changes server state by visiting a route. The Alpine file becomes React hooks. That split is the whole job of this slice.</p>
+  </details>
+
+  <h2>The approach</h2>
+  <p class="lede">Rebuild two pages — <code>notes/index</code> and <code>notes/show</code> — as React components fed by a thin <code>NoteController</code>, reusing the existing services untouched. Treat the note's saved state as an Inertia prop, and everything transient in the editor (which tab, the save indicator, the <code>[[</code> popover) as local React state.</p>
+  <div class="callout">
+    <span class="label">Intuition</span>
+    <p>Think of the old Livewire page as one person doing two jobs at once — clerk (talks to the database) and typist (handles the keyboard). Inertia splits them by a hard wall. The <strong>clerk stays on the server</strong> (the controller + services), hands the <strong>typist</strong> (React) a photocopy of the note, and the typist can only change the record by filing a request back through the wall. The editor autosave is the typist quietly filing an updated copy every time you stop typing — and showing a little "Saving… / Saved" note so you trust it happened.</p>
+  </div>
+
+  <h3>The autosave, concretely</h3>
+  <p>The one genuinely fiddly behaviour. In Livewire the debounce lived in a Blade attribute. On the new stack it becomes an explicit React effect: local state holds the draft title/body; when they change we mark status <code>unsaved</code>, wait for a 1.5s pause, then <code>PATCH</code> the note; while in flight, <code>saving</code>; on success, <code>saved</code>. The server response confirms and (crucially) returns freshly-reconciled links/backlinks, because saving the body re-parses <code>[[wikilinks]]</code> into connections.</p>
+
+  <figure>
+    <svg viewBox="0 0 680 250" role="img" aria-label="Data flow from typing to saved note and back">
+      <style>
+        .b{fill:#fff;stroke:#6b4d9e;stroke-width:1.5;rx:8}
+        .s{fill:#f4f1ea;stroke:#b5651d;stroke-width:1.5}
+        .t{font:13px ui-sans-serif,system-ui,sans-serif;fill:#262626}
+        .tm{font:11px ui-sans-serif,system-ui,sans-serif;fill:#5c5c5c}
+        .ar{stroke:#5c5c5c;stroke-width:1.4;fill:none;marker-end:url(#a)}
+      </style>
+      <defs><marker id="a" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#5c5c5c"/></marker></defs>
+      <rect class="b s" x="10" y="20" width="150" height="52" rx="8"/>
+      <text class="t" x="26" y="42">Textarea (React)</text>
+      <text class="tm" x="26" y="60">local draft state</text>
+      <rect class="b" x="10" y="150" width="150" height="52" rx="8"/>
+      <text class="t" x="26" y="172">debounce effect</text>
+      <text class="tm" x="26" y="190">1.5s pause → PATCH</text>
+      <rect class="b s" x="270" y="150" width="150" height="52" rx="8"/>
+      <text class="t" x="286" y="172">NoteController</text>
+      <text class="tm" x="286" y="190">@update</text>
+      <rect class="b" x="270" y="20" width="150" height="52" rx="8"/>
+      <text class="t" x="286" y="42">NoteService</text>
+      <text class="tm" x="286" y="60">update + sync links</text>
+      <rect class="b s" x="520" y="20" width="150" height="52" rx="8"/>
+      <text class="t" x="536" y="42">Inertia props</text>
+      <text class="tm" x="536" y="60">note, links, backlinks</text>
+      <rect class="b" x="520" y="150" width="150" height="52" rx="8"/>
+      <text class="t" x="536" y="172">React re-render</text>
+      <text class="tm" x="536" y="190">status → “saved”</text>
+      <path class="ar" d="M85,72 L85,150"/>
+      <path class="ar" d="M160,176 L270,176"/>
+      <path class="ar" d="M345,150 L345,72"/>
+      <path class="ar" d="M420,46 L520,46"/>
+      <path class="ar" d="M595,72 L595,150"/>
+      <text class="tm" x="430" y="120">partial reload:</text>
+      <text class="tm" x="430" y="136">only [note, links]</text>
+    </svg>
+    <figcaption>Typing stays local; a paused keystroke files a PATCH; the server reconciles links and hands back fresh props; React swaps the indicator to "saved". No persistent wire.</figcaption>
+  </figure>
+
+  <h2>Intended shape</h2>
+
+  <p>The controller is a thin dispatcher — authorize, delegate to the service, return props. Two read actions and the writes. (Coarse — real signatures are spec's job.)</p>
+  <div class="shapehdr">NoteController — entry points</div>
+  <pre><code>index(request):   authorize viewAny
+                  props = NoteService.listForUser(user, q, tagId)  // paginated
+                        + tagsForUser(user)
+                  render 'notes/index'  with {notes, tags, filters:{q,tagId}}
+
+show(note):       authorize view
+                  props = note (+tags) , outgoingLinks, backlinks, availableTags
+                  render 'notes/show'
+
+store(request):   authorize create ; note = NoteService.createForUser(...)
+                  redirect -> notes.show(note)          // fresh page = the editor
+
+update(note,req): authorize update ; NoteService.updateWithLinks(note, validated, user)
+                  redirect back            // props (note, links, backlinks) come back fresh
+
+destroy(note):    authorize delete ; DeleteNote.run(note) ; redirect -> notes.index</code></pre>
+
+  <p>The editor page's local state — everything the server does <em>not</em> need to know until save. This is the Alpine object, re-expressed as one hook.</p>
+  <div class="shapehdr">useNoteEditor(note) — client-only editor state</div>
+  <pre><code>draft   = { title, body }         // seeded from the note prop
+status  = 'saved' | 'unsaved' | 'saving'
+tab     = 'write' | 'preview'
+
+on draft change:  status = 'unsaved'
+                  debounce 1.5s -> PATCH update(note) with draft
+                                   status = 'saving' ... on success 'saved'
+
+// wikilink popover is its own hook, below</code></pre>
+
+  <p>The <code>[[</code> autocomplete — the trickiest client piece. It watches the caret, and when the text just before it is an unclosed <code>[[…</code>, it searches and shows a popover. Ported straight from <code>note-editor.js</code>.</p>
+  <div class="shapehdr">useWikilinkAutocomplete(textareaRef) — the [[ popover</div>
+  <pre><code>on keystroke / click in textarea:
+    look at text before caret
+    match /\[\[([^\]]*)$/   // an open "[[" with no closing "]]" yet
+    no match  -> hide popover
+    match     -> query = captured text
+                 debounce 200ms -> GET /notes/search?query=&exclude=
+                 show results (or "searching…" / "no matches")
+
+on pick(result):  replace the open "[[…" with "[[Title]]" , restore caret , hide
+keyboard:         ↑ / ↓ move highlight , ↵ pick , esc close   // NEW vs Livewire</code></pre>
+
+  <h2>Design decisions <span class="contest-note">— contest these</span></h2>
+
+  <div class="decision">
+    <p class="head">Keep the raw-markdown <code>&lt;textarea&gt;</code> + a Preview tab. Do <em>not</em> adopt a rich-text / WYSIWYG editor.</p>
+    <p class="why">The whole linking model is text-based (<code>[[Title]]</code> parsed server-side), the source app is deliberately a plain-text markdown editor, and a textarea is the lowest-risk faithful port. It also keeps the caret math for the <code>[[</code> popover simple (a real editor hides the caret behind its own model).</p>
+    <p class="rejected"><b>Rejected:</b> TipTap / Lexical / CodeMirror. Real power, but they change the editing model, complicate wikilink detection, add bundle weight, and turn a 1-slice port into its own project. If we want this, it's a deliberate later slice, not a smuggled-in default.</p>
+  </div>
+
+  <div class="decision">
+    <p class="head">Autosave = local draft state + a debounced <code>PATCH</code>, with a partial reload that pulls back only <code>note</code>, <code>outgoingLinks</code>, <code>backlinks</code>.</p>
+    <p class="why">Mirrors the old 1.5s debounce. Saving re-parses the body into connections, so links/backlinks genuinely change on save and must refresh — but the tags panel and page chrome don't, so a scoped reload (Inertia <code>only:</code>) avoids re-shipping the whole page on every pause.</p>
+    <p class="rejected"><b>Rejected:</b> (a) save-on-blur only — loses the "it's saving as I think" feel the app is built around. (b) A manual Save button — same. (c) Full-page reload on every save — wasteful and flickers the sidebar.</p>
+  </div>
+
+  <div class="decision">
+    <p class="head">Title and body autosave through the <em>same</em> debounced channel; creating a note stays a separate explicit <code>store</code>.</p>
+    <p class="why">On <code>show</code> both fields are just <code>draft</code> — unifying them means one save path, one status indicator. But <em>creating</em> (from the index) is a title-only intent that should redirect you into the editor, so it stays its own action, exactly as today.</p>
+    <p class="rejected"><b>Rejected:</b> Separate save paths for title vs body — two debounce timers racing, two status sources. Rejected for one source of truth.</p>
+  </div>
+
+  <div class="decision">
+    <p class="head">The <code>[[</code> popover calls <code>/notes/search</code> via Inertia's <code>useHttp</code> (a plain JSON request), not a router visit.</p>
+    <p class="why">It's a background lookup that must <em>not</em> swap the page or touch props — precisely the case <code>docs/architecture-inertia.md</code> reserves <code>useHttp</code> for. The existing <code>NoteSearchController</code> already returns the right JSON, so the endpoint is reused as-is.</p>
+    <p class="rejected"><b>Rejected:</b> raw <code>fetch</code> (what Alpine did) — works, but re-implements credentials/CSRF/error handling that <code>useHttp</code> gives for free and keeps consistent with the rest of the app.</p>
+  </div>
+
+  <div class="decision">
+    <p class="head">Split the client logic into two hooks — <code>useNoteEditor</code> (draft + autosave + tabs) and <code>useWikilinkAutocomplete</code> (the popover) — not one big component.</p>
+    <p class="why">They have independent lifecycles and the popover is reusable later (the same <code>[[</code> UX will want to appear in other note surfaces). Matches the app's existing <code>resources/js/hooks/</code> convention.</p>
+    <p class="rejected"><b>Rejected:</b> one monster <code>&lt;NoteEditor&gt;</code> holding all state — harder to test, and couples caret logic to save logic that have nothing to do with each other.</p>
+  </div>
+
+  <div class="decision">
+    <p class="head">Scope: this slice ships <span class="tag">in</span> list · create · live-search · tag-filter · delete · the editor · links/backlinks. It <span class="tag">stubs</span> the assist panel and the "Find connections" modal.</p>
+    <p class="why">The <code>show</code> page in the source embeds <code>&lt;assist-panel&gt;</code> and <code>&lt;connections-modal&gt;</code> — those are slices 6 (AI Assists) and 2 (Connections). I'll leave a visible placeholder where they mount so the layout is right and the later slices drop in cleanly.</p>
+    <p class="rejected"><b>Rejected:</b> pulling connections/assists forward to "finish show in one go" — that's the un-sliceable big-bang we explicitly chose against.</p>
+  </div>
+
+  <div class="decision">
+    <p class="head">Basic tag attach/detach/create rides along in this slice (it's welded into the <code>show</code> sidebar), but tag <em>management</em> as a feature belongs to slice 2.</p>
+    <p class="why">The editor sidebar is unusable without at least showing and adding tags, and the index tag-filter needs the tag list. So the minimum tag surface comes now; anything richer (renaming, colors, a tags page) waits.</p>
+    <p class="rejected"><b>Rejected:</b> deferring tags entirely — would leave the ported <code>show</code> visibly broken vs. the original.</p>
+  </div>
+
+  <h2>Where I'm guessing</h2>
+  <p class="contest-note">The honest gaps. These become the grill's opening agenda.</p>
+
+  <div class="guess">
+    <p class="head">Markdown rendering for the Preview tab.</p>
+    <p>The Livewire version fakes markdown with a handful of regex replacements (headings, bold, code, <code>[[links]]</code>) — deliberately tiny. On React I'd default to a real renderer (<code>react-markdown</code> + a remark plugin for <code>[[wikilinks]]</code>) for correctness. <strong>But</strong> that's a new dependency and a behaviour change (real markdown vs. the app's intentional subset). Do you want a faithful port of the regex-subset, or an upgrade to real markdown now? This is also a taste/scope call, not just technical.</p>
+  </div>
+
+  <div class="guess">
+    <p class="head">Where wikilink resolution and rendering should happen in preview.</p>
+    <p>In preview, <code>[[Title]]</code> should ideally render as a real link to that note if it exists (and a "create?" affordance if it doesn't). The source just renders a dead <code>#</code> anchor. I'm assuming a dead-link faithful port for this slice and deferring "resolve + click to navigate" — confirm that's acceptable, or it grows the slice.</p>
+  </div>
+
+  <div class="guess">
+    <p class="head">List style and tag-filter placement.</p>
+    <p>I'm assuming a faithful port: card-per-note list + an inline tag-chip filter row, matching the original. Research surfaced denser-table (Zoom) and filter-popover (Frame) alternatives. I'll port faithfully unless you'd rather restyle now — but restyling is better as its own taste pass than mixed into a stack migration.</p>
+  </div>
+
+  <div class="guess">
+    <p class="head">Note-type on create.</p>
+    <p>The source always creates a <code>Fleeting</code> note from the index (title only), and type changes elsewhere. I'm assuming that stays. If you want a type picker at creation time, that's a small addition but a behaviour change worth naming.</p>
+  </div>
+
+  <div class="guess">
+    <p class="head">Autosave conflict / navigation safety.</p>
+    <p>The source doesn't guard against navigating away mid-save, and Livewire's wire made it mostly moot. On an SPA I'd consider a "you have unsaved changes" guard and flushing a pending debounce on unmount. I'm assuming we match the source (no guard) for parity, but flag it — it's a real UX gap the port could quietly fix.</p>
+  </div>
+
+  <div class="guess">
+    <p class="head">Search backend availability in the target app.</p>
+    <p><code>NoteService.listForUser</code> and <code>searchForUser</code> use Laravel Scout + Meilisearch. I'm assuming the target app will run the same Scout/Meilisearch setup (it's a backend port, not a rewrite). If the target is meant to start on the database driver instead, the search path changes. Needs confirming before implement.</p>
+  </div>
+
+</div>
+</body>
+</html>
