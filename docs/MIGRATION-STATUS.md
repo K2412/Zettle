@@ -87,7 +87,7 @@ local/testing + keyless → fake; keyless staging/prod fails loud). ADR-0005 rec
 to note content and the two-rail seam. Assists are read-only to note content — they suggest, spawn
 siblings, and set metadata, but never rewrite the viewed note's title/body.
 
-### Slice 6 · AI Assists — run 2 of ~4 (epic — T5/T6)
+### Slice 6 · AI Assists — run 2 of ~4 (epic #1075)
 **Triage** + **Formulate**, following the run-1 two-rail seam (ADR-0005 unchanged — no new ADR).
 **Triage** reads a note and suggests a **triage destination** + a note type; its read is a background
 `fetch` into ephemeral state (the note untouched), and its one write is the set-type Inertia `<Form>`

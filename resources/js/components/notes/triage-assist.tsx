@@ -37,8 +37,8 @@ export function TriageAssist({ note }: Props) {
     return (
         <div className="flex flex-col gap-3" data-test="triage-assist">
             <p className="text-sm text-muted-foreground">
-                Classify where this note should go and what type it should be —
-                then set the type if the suggestion fits.
+                Decide what should happen to this note — where it goes and what
+                type it is — then set the type if the suggestion fits.
             </p>
 
             <Button

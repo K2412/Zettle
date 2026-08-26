@@ -39,7 +39,7 @@ export function FormulateAssist({ note }: Props) {
         <div className="flex flex-col gap-4" data-test="formulate-assist">
             <p className="text-sm text-muted-foreground">
                 Reach for a scaffold that fits the shape of the idea, or paste a
-                draft below for a read-only critique.
+                draft below for a critique.
             </p>
 
             <div className="flex flex-wrap gap-1.5" role="tablist">
