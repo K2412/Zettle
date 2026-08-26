@@ -101,6 +101,32 @@ Accepting one spawns a fresh permanent note linked back to the origin — the or
 rewritten.
 _Avoid_: split, extract, break up
 
+**Triage**:
+The assist that reads a note and suggests where it should go and what type it should be. Running it
+only proposes; the one thing the user can then write is the note's type — never its title or body.
+_Avoid_: sort, categorize, classify (that is the mechanism, not the assist)
+
+**Triage destination**:
+Where a triaged note should head next (`discard`, `task`, `project_only`, `keep_literature`,
+`develop`, `question`, `multi_idea`) — a routing hint the user reads, not a field stored on the note.
+_Avoid_: category, bucket, status
+
+**Formulate**:
+The read-only assist for shaping a single note. It offers scaffold templates to start from and
+critiques a draft as prose — and writes nothing at all, not even the note's type.
+_Avoid_: draft, compose, generate
+
+**Scaffold template**:
+An empty, type-appropriate markdown skeleton (permanent, argument, distinction, mechanism, question,
+tension, application, counterexample) the user copies into a note and fills in themselves. Static
+client-side text — no AI, no round-trip.
+_Avoid_: boilerplate, snippet, form
+
+**Draft critique**:
+The prose feedback Formulate returns on a draft the user has written — read-only guidance surfaced in
+the panel, never pasted into or persisted on the note.
+_Avoid_: correction, edit, suggestion (it advises; it does not change the note)
+
 **Provenance connection**:
 The typed connection a spawned note carries back to the note it came from (`provenance`), recording
 where the idea originated. Created automatically on spawn; it reads as a backlink on the origin.

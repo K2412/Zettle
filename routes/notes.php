@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Note\AtomizeController;
 use App\Http\Controllers\Note\ConnectionController;
+use App\Http\Controllers\Note\FormulateController;
 use App\Http\Controllers\Note\NoteTagController;
+use App\Http\Controllers\Note\TriageController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\NoteDiscoveryController;
 use App\Http\Controllers\NoteGraphController;
@@ -34,4 +36,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // is a POST (not a prefetchable GET); the write rail rides an Inertia visit.
     Route::post('notes/{note:slug}/assists/atomize', [AtomizeController::class, 'run'])->name('notes.assists.atomize');
     Route::post('notes/{note:slug}/assists/atomize/spawn', [AtomizeController::class, 'spawn'])->name('notes.assists.atomize.spawn');
+
+    Route::post('notes/{note:slug}/assists/triage', [TriageController::class, 'run'])->name('notes.assists.triage');
+    Route::post('notes/{note:slug}/assists/triage/apply-type', [TriageController::class, 'applyType'])->name('notes.assists.triage.apply-type');
+
+    Route::post('notes/{note:slug}/assists/formulate/evaluate', [FormulateController::class, 'evaluate'])->name('notes.assists.formulate.evaluate');
 });
