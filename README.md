@@ -264,6 +264,7 @@ zettle/
 │   ├── migrations/             # notes, connections, tags, templates, embeddings
 │   ├── extensions/             # vec0.* (gitignored; see README there)
 │   └── factories/
+├── CONTEXT.md                  # Domain glossary (notes, connections, assists)
 ├── docs/
 │   ├── architecture-svelte.md
 │   └── patterns-svelte-class-stores.md
@@ -272,7 +273,7 @@ zettle/
 
 ## Architecture
 
-The rules live in [`docs/architecture-svelte.md`](docs/architecture-svelte.md). Two of them carry the rest:
+Domain language lives in [`CONTEXT.md`](CONTEXT.md). The architecture rules live in [`docs/architecture-svelte.md`](docs/architecture-svelte.md). Two of them carry the rest:
 
 1. **Inertia props are server-owned truth; Svelte `$state` is client-owned.**
    Server-meaningful, persisted, or validated state is a prop, changed by *visiting a route* — never by mutating a prop in place. Ephemeral UI state (tabs, dialogs, assist results, canvas pointers) lives in `$state` or a class store and never crosses the wire.
