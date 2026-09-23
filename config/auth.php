@@ -114,4 +114,18 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Allowed Email
+    |--------------------------------------------------------------------------
+    |
+    | The single email address permitted to sign up or sign in. Any other email
+    | is redirected home by the EnsureEmailIsAllowed middleware. Set this via the
+    | AUTH_ALLOWED_EMAIL env var so the address is never committed to the repo.
+    | When unset, all authentication attempts are blocked (fails closed).
+    |
+    */
+
+    'allowed_email' => env('AUTH_ALLOWED_EMAIL'),
+
 ];
